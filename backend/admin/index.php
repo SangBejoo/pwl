@@ -3,32 +3,28 @@
     include('assets/inc/config.php');//get configuration file
     $rand = rand(1000,9999);
 if (isset($_POST['admin_login'])) {
-    $doc_number = $_POST['ad_email'];
-    $doc_pwd = sha1(md5($_POST['ad_pwd'])); //double encrypt to increase security
+    $ad_email = $_POST['ad_email'];
+    $ad_pwd = sha1(md5($_POST['ad_pwd'])); //double encrypt to increase security
     $captcha = $_REQUEST['captcha'];
     $captcha_rand = $_REQUEST['captcha-rand'];
     if ($captcha != $captcha_rand) {
         $err = "Captcha does not match";
     } else {
-        
         $stmt=$mysqli->prepare("SELECT ad_email ,ad_pwd , ad_id FROM his_admin WHERE ad_email=? AND ad_pwd=? ");//sql to log in user
         $stmt->bind_param('ss',$ad_email,$ad_pwd);//bind fetched parameters
         $stmt->execute();//execute bind
         $stmt -> bind_result($ad_email,$ad_pwd,$ad_id);//bind result
         $rs=$stmt->fetch();
-        $_SESSION['ad_id']=$ad_id;//Assign session to admin id
+        $_SESSION['ad_id']=$ad_id; //Assign session to doc_number id
+        
         //$uip=$_SERVER['REMOTE_ADDR'];
         //$ldate=date('d/m/Y h:i:s', time());
-        if($rs)
-            {//if its sucessfull
-                header("location:his_admin_dashboard.php");
-            }
-
-        else
-            {
-            echo "<script>alert('Access Denied Please Check Your Credentials');</script>";
-                $err = "Access Denied Please Check Your Credentials";
-            }
+        if ($rs) { //if its sucessfull
+            header("location:his_admin_dashboard.php");
+        } else {
+            #echo "<script>alert('Access Denied Please Check Your Credentials');</script>";
+            $err = "Access Denied Please Check Your Credentials";
+        }
     }
 }
        
@@ -39,10 +35,9 @@ if (isset($_POST['admin_login'])) {
 <html lang="en">
     
 <head>
-ad>
     <style>
         .captcha{
-            background-color: #f5f5f5;
+            background-color: #FFEA20;
             border: 1px solid #ccc;
             padding: 10px;
             font-size: 20px;
@@ -53,13 +48,13 @@ ad>
         }
     </style>
         <meta charset="utf-8" />
-        <title>Hospital Management System PROJECT PWL</title>
+        <title>Hospital Management SystemProject PWL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="" name="description" />
         <meta content="" name="MartDevelopers" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <!-- App favicon -->
-          <link rel="shortcut icon" href="assets/images/favicon.ico">
+         <!-- App favicon -->
+         <link rel="shortcut icon" href="assets/images/favicon.ico">
 
 <!-- App css -->
 <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -92,6 +87,7 @@ ad>
         </script>
 
 <?php } ?>
+
 
 
     </head>
@@ -139,7 +135,27 @@ ad>
 
                                 </form>
 
-                               
+                                <!--
+                                For Now Lets Disable This 
+                                This feature will be implemented on later versions
+                                <div class="text-center">
+                                    <h5 class="mt-3 text-muted">Sign in with</h5>
+                                    <ul class="social-list list-inline mt-3 mb-0">
+                                        <li class="list-inline-item">
+                                            <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i class="mdi mdi-facebook"></i></a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="javascript: void(0);" class="social-list-item border-danger text-danger"><i class="mdi mdi-google"></i></a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="javascript: void(0);" class="social-list-item border-info text-info"><i class="mdi mdi-twitter"></i></a>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i class="mdi mdi-github-circle"></i></a>
+                                        </li>
+                                    </ul>
+                                </div> 
+                                -->
 
                             </div> <!-- end card-body -->
                         </div>

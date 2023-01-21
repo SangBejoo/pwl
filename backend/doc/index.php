@@ -10,6 +10,7 @@ if (isset($_POST['doc_login'])) {
     if ($captcha != $captcha_rand) {
         $err = "Captcha does not match";
     } else {
+       
         $stmt = $mysqli->prepare("SELECT doc_number, doc_pwd, doc_id FROM his_docs WHERE  doc_number=? AND doc_pwd=? "); //sql to log in user
         $stmt->bind_param('ss', $doc_number, $doc_pwd); //bind fetched parameters
         $stmt->execute(); //execute bind
