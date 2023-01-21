@@ -1,10 +1,15 @@
 <?php
     session_start();
     include('assets/inc/config.php');//get configuration file
-    if(isset($_POST['admin_login']))
-    {
-        $ad_email=$_POST['ad_email'];
-        $ad_pwd=sha1(md5($_POST['ad_pwd']));//double encrypt to increase security
+    $rand = rand(1000,9999);
+if (isset($_POST['admin_login'])) {
+    $doc_number = $_POST['ad_email'];
+    $captcha = $_REQUEST['captcha'];
+    $captcha_rand = $_REQUEST['captcha-rand'];
+    if ($captcha != $captcha_rand) {
+        $err = "Captcha does not match";
+    } else {
+        $doc_pwd = sha1(md5($_POST['ad_pwd'])); //double encrypt to increase security
         $stmt=$mysqli->prepare("SELECT ad_email ,ad_pwd , ad_id FROM his_admin WHERE ad_email=? AND ad_pwd=? ");//sql to log in user
         $stmt->bind_param('ss',$ad_email,$ad_pwd);//bind fetched parameters
         $stmt->execute();//execute bind
@@ -20,57 +25,72 @@
 
         else
             {
-            #echo "<script>alert('Access Denied Please Check Your Credentials');</script>";
+            echo "<script>alert('Access Denied Please Check Your Credentials');</script>";
                 $err = "Access Denied Please Check Your Credentials";
             }
     }
+}
+       
 ?>
+
 <!--End Login-->
 <!DOCTYPE html>
 <html lang="en">
     
 <head>
+ad>
+    <style>
+        .captcha{
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
         <meta charset="utf-8" />
-        <title>Hospital Management System -A Super Responsive Information System</title>
+        <title>Hospital Management System PROJECT PWL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="" name="description" />
         <meta content="" name="MartDevelopers" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+          <!-- App favicon -->
+          <link rel="shortcut icon" href="assets/images/favicon.ico">
 
-        <!-- App css -->
-        <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
-        <!--Load Sweet Alert Javascript-->
-        
-        <script src="assets/js/swal.js"></script>
-        <!--Inject SWAL-->
-        <?php if(isset($success)) {?>
-        <!--This code for injecting an alert-->
-                <script>
-                            setTimeout(function () 
-                            { 
-                                swal("Success","<?php echo $success;?>","success");
-                            },
-                                100);
-                </script>
+<!-- App css -->
+<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+<!--Load Sweet Alert Javascript-->
 
-        <?php } ?>
+<script src="assets/js/swal.js"></script>
+<!--Inject SWAL-->
+<?php if(isset($success)) {?>
+<!--This code for injecting an alert-->
+        <script>
+                    setTimeout(function () 
+                    { 
+                        swal("Success","<?php echo $success;?>","success");
+                    },
+                        100);
+        </script>
 
-        <?php if(isset($err)) {?>
-        <!--This code for injecting an alert-->
-                <script>
-                            setTimeout(function () 
-                            { 
-                                swal("Failed","<?php echo $err;?>","Failed");
-                            },
-                                100);
-                </script>
+<?php } ?>
 
-        <?php } ?>
+<?php if(isset($err)) {?>
+<!--This code for injecting an alert-->
+        <script>
+                    setTimeout(function () 
+                    { 
+                        swal("Failed","<?php echo $err;?>","error");
+                    },
+                        100);
+        </script>
 
+<?php } ?>
 
 
     </head>
@@ -102,6 +122,14 @@
                                     <div class="form-group mb-3">
                                         <label for="password">Password</label>
                                         <input class="form-control" name="ad_pwd" type="password" required="" id="password" placeholder="Enter your password">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <div class="captcha"><?php echo $rand; ?></div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="captcha">Captcha</label>
+                                        <input class="form-control" name="captcha" type="text" required="" id="captcha" placeholder="Enter Captcha">
+                                        <input type="hidden" name="captcha-rand" value="<?php echo $rand; ?>">
                                     </div>
 
                                     <div class="form-group mb-0 text-center">

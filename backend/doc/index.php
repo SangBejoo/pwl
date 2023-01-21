@@ -1,39 +1,53 @@
 <?php
     session_start();
     include('assets/inc/config.php');//get configuration file
-    if(isset($_POST['doc_login']))
-    {
-        $doc_number = $_POST['doc_number'];
-        //$doc_email = $_POST['doc_ea']
-        $doc_pwd = sha1(md5($_POST['doc_pwd']));//double encrypt to increase security
-        $stmt=$mysqli->prepare("SELECT doc_number, doc_pwd, doc_id FROM his_docs WHERE  doc_number=? AND doc_pwd=? ");//sql to log in user
-        $stmt->bind_param('ss', $doc_number, $doc_pwd);//bind fetched parameters
-        $stmt->execute();//execute bind
-        $stmt -> bind_result($doc_number, $doc_pwd ,$doc_id);//bind result
-        $rs=$stmt->fetch();
+    $rand = rand(1000,9999);
+if (isset($_POST['doc_login'])) {
+    $doc_number = $_POST['doc_number'];
+    $captcha = $_REQUEST['captcha'];
+    $captcha_rand = $_REQUEST['captcha-rand'];
+    if ($captcha != $captcha_rand) {
+        $err = "Captcha does not match";
+    } else {
+        $doc_pwd = sha1(md5($_POST['doc_pwd'])); //double encrypt to increase security
+        $stmt = $mysqli->prepare("SELECT doc_number, doc_pwd, doc_id FROM his_docs WHERE  doc_number=? AND doc_pwd=? "); //sql to log in user
+        $stmt->bind_param('ss', $doc_number, $doc_pwd); //bind fetched parameters
+        $stmt->execute(); //execute bind
+        $stmt->bind_result($doc_number, $doc_pwd, $doc_id); //bind result
+        $rs = $stmt->fetch();
         $_SESSION['doc_id'] = $doc_id;
-        $_SESSION['doc_number'] = $doc_number;//Assign session to doc_number id
+        $_SESSION['doc_number'] = $doc_number; //Assign session to doc_number id
         //$uip=$_SERVER['REMOTE_ADDR'];
         //$ldate=date('d/m/Y h:i:s', time());
-        if($rs)
-            {//if its sucessfull
-                header("location:his_doc_dashboard.php");
-            }
-
-        else
-            {
+        if ($rs) { //if its sucessfull
+            header("location:his_doc_dashboard.php");
+        } else {
             #echo "<script>alert('Access Denied Please Check Your Credentials');</script>";
-                $err = "Access Denied Please Check Your Credentials";
-            }
+            $err = "Access Denied Please Check Your Credentials";
+        }
     }
+}
+       
 ?>
 <!--End Login-->
 <!DOCTYPE html>
 <html lang="en">
     
 <head>
+    <style>
+        .captcha{
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
         <meta charset="utf-8" />
-        <title>Hospital Management System -A Super Responsive Information System</title>
+        <title>Hospital Management System PROJECT PWL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="" name="description" />
         <meta content="" name="MartDevelopers" />
@@ -104,6 +118,14 @@
                                     <div class="form-group mb-3">
                                         <label for="password">Password</label>
                                         <input class="form-control" name="doc_pwd" type="password" required="" id="password" placeholder="Enter your password">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <div class="captcha"><?php echo $rand; ?></div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label for="captcha">Captcha</label>
+                                        <input class="form-control" name="captcha" type="text" required="" id="captcha" placeholder="Enter Captcha">
+                                        <input type="hidden" name="captcha-rand" value="<?php echo $rand; ?>">
                                     </div>
 
                                     <div class="form-group mb-0 text-center">
