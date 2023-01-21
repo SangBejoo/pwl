@@ -4,12 +4,13 @@
     $rand = rand(1000,9999);
 if (isset($_POST['admin_login'])) {
     $doc_number = $_POST['ad_email'];
+    $doc_pwd = sha1(md5($_POST['ad_pwd'])); //double encrypt to increase security
     $captcha = $_REQUEST['captcha'];
     $captcha_rand = $_REQUEST['captcha-rand'];
     if ($captcha != $captcha_rand) {
         $err = "Captcha does not match";
     } else {
-        $doc_pwd = sha1(md5($_POST['ad_pwd'])); //double encrypt to increase security
+        
         $stmt=$mysqli->prepare("SELECT ad_email ,ad_pwd , ad_id FROM his_admin WHERE ad_email=? AND ad_pwd=? ");//sql to log in user
         $stmt->bind_param('ss',$ad_email,$ad_pwd);//bind fetched parameters
         $stmt->execute();//execute bind
@@ -138,27 +139,7 @@ ad>
 
                                 </form>
 
-                                <!--
-                                For Now Lets Disable This 
-                                This feature will be implemented on later versions
-                                <div class="text-center">
-                                    <h5 class="mt-3 text-muted">Sign in with</h5>
-                                    <ul class="social-list list-inline mt-3 mb-0">
-                                        <li class="list-inline-item">
-                                            <a href="javascript: void(0);" class="social-list-item border-primary text-primary"><i class="mdi mdi-facebook"></i></a>
-                                        </li>
-                                        <li class="list-inline-item">
-                                            <a href="javascript: void(0);" class="social-list-item border-danger text-danger"><i class="mdi mdi-google"></i></a>
-                                        </li>
-                                        <li class="list-inline-item">
-                                            <a href="javascript: void(0);" class="social-list-item border-info text-info"><i class="mdi mdi-twitter"></i></a>
-                                        </li>
-                                        <li class="list-inline-item">
-                                            <a href="javascript: void(0);" class="social-list-item border-secondary text-secondary"><i class="mdi mdi-github-circle"></i></a>
-                                        </li>
-                                    </ul>
-                                </div> 
-                                -->
+                               
 
                             </div> <!-- end card-body -->
                         </div>
